@@ -5,8 +5,14 @@ const key         = 'dd87d1fd77ba16c8fb1e6e819e0b2d41';
 const secret      = '569168d86f2d841b895df4d3066d7db1';
 const url         = 'https:\//api.petfinder.com';
 
+app.use(bodyparser.urlencoded({extended: true}));
+app.use(bodyparser.json());
 
-app.use(bodyparser);
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.get('/', (req, res) => {
 	res.send('Hello from petfinder!');
@@ -24,7 +30,7 @@ app.get('/random', (req, res) => {
 		JSONP(`${url}/pet.get?id=${id}&key=${key}&format=json`, json => {
 
 			let dataToSend = checkPetExists(json);
-			res.send(dataToSend);
+			res.json(dataToSend);
 			
 		});
 	})
