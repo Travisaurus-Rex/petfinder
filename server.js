@@ -76,8 +76,9 @@ app.get('/shelter/:location', (req, res) => {
 app.get('/shelter/:location/pets', (req, res) => {
 
 })
-
-app.listen(3000);
+const port = process.env.PORT || 8080;
+app.set('port', port);
+app.listen(app.get('port'));
 
 function checkPetExists(pet) {
 	if (pet.petfinder.hasOwnProperty('pet')) {
