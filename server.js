@@ -4,6 +4,9 @@ const app         = require('express')();
 const key         = 'dd87d1fd77ba16c8fb1e6e819e0b2d41';
 const secret      = '569168d86f2d841b895df4d3066d7db1';
 const url         = 'https:\//api.petfinder.com';
+const pretty      = require('express-prettify');
+
+app.use(pretty({ query: 'pretty'}))
 
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
@@ -36,6 +39,13 @@ app.get('/random', (req, res) => {
 	})
 })
 
+// ROUTE: FIND PETS BY SEARCH
+app.get('/pet/find', (req, res) => {
+	JSONP(`${url}/pet.find?location=47665&key=${key}&format=json`, json => {
+		res.status(200).send(setOptions(json.petfinder.pets.pet[2].options.option));
+	})
+})
+
 // ROUTE: GET SINGLE PET RECORD
 app.get('/pet/:id', (req, res) => {
 
@@ -45,11 +55,6 @@ app.get('/pet/:id', (req, res) => {
 		res.send(dataToSend);
 		
 	});
-})
-
-// ROUTE: FIND PETS BY SEARCH
-app.post('/pet/find', (req, res) => {
-
 })
 
 // DEBUGGING ROUTE: GET SINGLE PET RECORD
@@ -78,7 +83,7 @@ app.get('/shelter/:location/pets', (req, res) => {
 })
 const port = process.env.PORT || 8080;
 app.set('port', port);
-app.listen(app.get('port'));
+app.listen(app.get('port'), () => console.log(`Server running at localhost:${app.get('port')}`));
 
 function checkPetExists(pet) {
 	if (pet.petfinder.hasOwnProperty('pet')) {
@@ -161,3 +166,37 @@ function checkBreeds(objWithBreeds) {
 		return false;
 	}
 }
+
+function setOptions(options = null) {
+
+	let obj = {
+		hasShots: false,
+		altered: false,
+		houseTrained: false
+	};
+
+	if (Array.isArray(options)) {
+
+		options.forEach(opt => {
+			if (opt.$t === 'hasShots') {
+				obj.hasShots = true;
+			} else if (opt.$t === 'altered') {
+				obj.altered = true;
+			} else if (opt.$t === 'housetrained') {
+				obj.houseTrained = true;
+			}
+		})
+
+	} else if (typeof options === 'object') {
+		if (options.$t === 'hasShots') {
+				obj.hasShots = true;
+			} else if (options.$t === 'altered') {
+				obj.altered = true;
+			} else if (options.$t === 'housetrained') {
+				obj.houseTrained = true;
+			}
+	}
+
+	return obj;
+}
+
