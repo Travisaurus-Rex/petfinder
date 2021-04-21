@@ -97,8 +97,6 @@ function checkPetExists(pet) {
 }
 
 function cleanPetObj(data) {
-	console.log(data.petfinder.pet);
-
 	let obj = data.petfinder.pet;
 
 	let pet = {
@@ -149,13 +147,7 @@ function cleanPetObj(data) {
 }
 
 function checkImages(objWithPhotos) {
-	if ( objWithPhotos.hasOwnProperty('media') 
-		&& objWithPhotos.media.hasOwnProperty('photos')
-		&& objWithPhotos.media.photos.hasOwnProperty('photo')) {
-		return true;
-	} else {
-		return false;
-	}
+	return objWithPhotos.hasOwnProperty('media') && objWithPhotos.media.hasOwnProperty('photos') && objWithPhotos.media.photos.hasOwnProperty('photo');
 }
 
 function checkBreeds(objWithBreeds) {
